@@ -2,6 +2,8 @@
 
 Spring Boot REST service that tracks product stock levels. It is the practice codebase for the Kiro MCP lab.
 
+See `docs/conventions.md` for the team coding conventions.
+
 ## Tech stack
 
 Java 21, Spring Boot 3.2.x, PostgreSQL 15+, Maven, JUnit 5, Mockito.
