@@ -28,6 +28,9 @@ public class ProductStock {
     @Column(nullable = false)
     private int quantity;
 
+    @Column(name = "low_stock_threshold", nullable = false)
+    private int lowStockThreshold = 10;
+
     @Version
     private Long version;
 
@@ -53,6 +56,14 @@ public class ProductStock {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public int getLowStockThreshold() {
+        return lowStockThreshold;
+    }
+
+    public void setLowStockThreshold(int lowStockThreshold) {
+        this.lowStockThreshold = lowStockThreshold;
     }
 
     public Long getVersion() {

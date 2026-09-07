@@ -2,7 +2,9 @@ package com.training.inventory.controller;
 
 import com.training.inventory.dto.StockAdjustmentRequest;
 import com.training.inventory.dto.StockResponse;
+import com.training.inventory.service.LowStockService;
 import com.training.inventory.service.StockService;
+import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,9 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class StockController {
 
     private final StockService stockService;
+    private final LowStockService lowStockService;
 
-    public StockController(StockService stockService) {
+    public StockController(StockService stockService, LowStockService lowStockService) {
         this.stockService = stockService;
+        this.lowStockService = lowStockService;
     }
 
     /**
@@ -45,5 +49,15 @@ public class StockController {
     public StockResponse adjustStock(@PathVariable String productId,
                                      @RequestBody StockAdjustmentRequest request) {
         return stockService.adjustStock(productId, request.delta());
+    }
+
+    /**
+     * Lists products at or below their low-stock threshold.
+     *
+     * @return the low-stock products
+     */
+    @GetMapping("/low")
+    public List<StockResponse> lowStock() {
+        return lowStockService.findLowStock();
     }
 }
