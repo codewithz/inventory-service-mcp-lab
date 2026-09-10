@@ -4,6 +4,7 @@ import com.training.inventory.dto.StockAdjustmentRequest;
 import com.training.inventory.dto.StockResponse;
 import com.training.inventory.service.LowStockService;
 import com.training.inventory.service.StockService;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,7 +48,7 @@ public class StockController {
      */
     @PostMapping("/{productId}/adjustments")
     public StockResponse adjustStock(@PathVariable String productId,
-                                     @RequestBody StockAdjustmentRequest request) {
+                                     @Valid @RequestBody StockAdjustmentRequest request) {
         return stockService.adjustStock(productId, request.delta());
     }
 
