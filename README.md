@@ -18,6 +18,14 @@ mvn spring-boot:run
 
 The service starts on port 8081. Swagger UI is at `http://localhost:8081/swagger-ui.html`.
 
+## API endpoints
+
+| Method | Path | Description | Request Body | Response |
+|---|---|---|---|---|
+| GET | /api/v1/stock-levels/{productId} | Get the current stock for a product | none | 200 StockResponse |
+| POST | /api/v1/stock-levels/{productId}/adjustments | Adjust stock by a positive or negative delta | StockAdjustmentRequest | 200 StockResponse |
+| GET | /api/v1/stock-levels/low | List products at or below their low-stock threshold | none | 200 StockResponse[] |
+
 ## Running the tests
 
 ```bash
