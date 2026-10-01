@@ -1,5 +1,6 @@
 package com.training.inventory.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -32,5 +33,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({InsufficientStockException.class, OptimisticLockingFailureException.class})
     public ProblemDetail handleConflict(RuntimeException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ProblemDetail handleConstraintViolation(ConstraintViolationException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 }

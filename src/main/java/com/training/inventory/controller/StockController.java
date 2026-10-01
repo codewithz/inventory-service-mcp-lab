@@ -5,7 +5,9 @@ import com.training.inventory.dto.StockResponse;
 import com.training.inventory.service.LowStockService;
 import com.training.inventory.service.StockService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import java.util.List;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,8 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
  * REST endpoints for reading and adjusting stock levels.
  */
 @RestController
+@Validated
 @RequestMapping("/api/v1/stock-levels")
 public class StockController {
+
+    static final String PRODUCT_ID_PATTERN = "^[A-Z]{3}-\\d{4}$";
 
     private final StockService stockService;
     private final LowStockService lowStockService;
@@ -35,7 +40,7 @@ public class StockController {
      * @return the stock level
      */
     @GetMapping("/{productId}")
-    public StockResponse getStock(@PathVariable String productId) {
+    public StockResponse getStock(@PathVariable @Pattern(regexp = PRODUCT_ID_PATTERN, message = "productId must look like SKU-1001") String productId) {
         return stockService.getStock(productId);
     }
 
@@ -47,7 +52,7 @@ public class StockController {
      * @return the updated stock level
      */
     @PostMapping("/{productId}/adjustments")
-    public StockResponse adjustStock(@PathVariable String productId,
+    public StockResponse adjustStock(@PathVariable @Pattern(regexp = PRODUCT_ID_PATTERN, message = "productId must look like SKU-1001") String productId,
                                      @Valid @RequestBody StockAdjustmentRequest request) {
         return stockService.adjustStock(productId, request.delta());
     }
