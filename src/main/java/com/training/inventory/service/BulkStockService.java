@@ -16,7 +16,11 @@ public class BulkStockService {
         for (BulkStockItem item : items) {
             String sql = "UPDATE product_stock SET quantity = " + item.quantity()
                     + " WHERE product_id = '" + item.productId() + "'";
-            jdbcTemplate.execute(sql);
+            try {
+                jdbcTemplate.execute(sql);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return "ok";
     }
