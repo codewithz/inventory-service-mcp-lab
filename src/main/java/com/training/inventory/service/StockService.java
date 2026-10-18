@@ -21,9 +21,11 @@ public class StockService {
     private static final Logger log = LoggerFactory.getLogger(StockService.class);
 
     private final ProductStockRepository repository;
+    private final AlertNotificationService alertNotificationService;
 
-    public StockService(ProductStockRepository repository) {
+    public StockService(ProductStockRepository repository, AlertNotificationService alertNotificationService) {
         this.repository = repository;
+        this.alertNotificationService = alertNotificationService;
     }
 
     /**
@@ -57,7 +59,11 @@ public class StockService {
             throw new InsufficientStockException(productId, stock.getQuantity(), -delta);
         }
         stock.setQuantity(updated);
-        return StockResponse.from(repository.save(stock));
+        ProductStock saved = repository.save(stock);
+        if (saved.getQuantity() <= saved.getLowStockThreshold()) {
+            alertNotificationService.notifyLowStock(productId, saved.getQuantity());
+        }
+        return StockResponse.from(saved);
     }
 
     private ProductStock find(String productId) {

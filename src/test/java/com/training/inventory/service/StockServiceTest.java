@@ -3,6 +3,8 @@ package com.training.inventory.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.training.inventory.dto.StockResponse;
@@ -23,11 +25,14 @@ class StockServiceTest {
     @Mock
     private ProductStockRepository repository;
 
+    @Mock
+    private AlertNotificationService alerts;
+
     private StockService service;
 
     @BeforeEach
     void setUp() {
-        service = new StockService(repository);
+        service = new StockService(repository, alerts);
     }
 
     @Test
@@ -54,6 +59,17 @@ class StockServiceTest {
         StockResponse response = service.adjustStock("SKU-1001", 5);
 
         assertThat(response.quantity()).isEqualTo(25);
+        verify(alerts, never()).notifyLowStock(any(), org.mockito.ArgumentMatchers.anyInt());
+    }
+
+    @Test
+    void adjustStockSendsAlertWhenStockFallsToThreshold() {
+        when(repository.findByProductId("SKU-1001")).thenReturn(Optional.of(new ProductStock("SKU-1001", 12)));
+        when(repository.save(any(ProductStock.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        service.adjustStock("SKU-1001", -4);
+
+        verify(alerts).notifyLowStock("SKU-1001", 8);
     }
 
     @Test
